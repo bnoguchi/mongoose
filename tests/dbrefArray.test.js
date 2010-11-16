@@ -248,6 +248,25 @@ module.exports = {
     });
   },
 
+  'test toJSON of the dbref array': function (assert, done) {
+    var cuisine = new Cuisine({
+      name: 'Breakfast',
+      restaurants: [ { name: 'Stacks' }, {name: 'Farm:Table'}, { name: "Dottie's"} ]
+    });
+    cuisine.restaurants.toJSON( function (restaurantAsJSON) {
+      restaurantAsJSON.extra = "test";
+      return restaurantAsJSON;
+    }).all( function (jsonDiners) {
+      assert.ok(jsonDiners.length === 3);
+      assert.ok(jsonDiners[0] instanceof Restaurant === false);
+      assert.ok(jsonDiners[0].name === 'Stacks - SF');
+      assert.ok(jsonDiners[0].extra = "test");
+      assert.ok(jsonDiners[1].name === 'Farm:Table - SF');
+      assert.ok(jsonDiners[2].name === "Dottie's - SF");
+      done();
+    });
+  },
+
   teardown: function(){
     db.close();
   }
