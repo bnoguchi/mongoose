@@ -3,9 +3,10 @@ var assert = require('assert')
   , db = mongoose.connect('mongodb://localhost/dbrefTests')
   , DBRef = require('../support/node-mongodb-native/lib/mongodb/bson/bson').DBRef;
 
-mongoose.define('Dog')
-  .oid('_id')
-  .string('name');
+var DogSchema = 
+  mongoose.define('Dog')
+    .oid('_id')
+    .string('name');
 var Dog = mongoose.Dog;
 
 mongoose.define('User')
@@ -14,6 +15,22 @@ mongoose.define('User')
   .dbref('dog', Dog)
   .dbrefArray('puppies', Dog);
 var User = mongoose.User;
+
+mongoose.define('User2')
+  .oid('_id')
+  .string('name')
+  .dbref('dog', DogSchema)
+  .dbrefArray('puppies', DogSchema);
+var User2 = mongoose.User2;
+
+//console.log(DogSchema)
+
+mongoose.define('User3')
+  .oid('_id')
+  .string('name')
+  .dbref('dog', 'Dog')
+  .dbrefArray('puppies', 'Dog');
+var User3 = mongoose.User3;
 
 // TODO api for refreshing/reloading data
 module.exports = {
@@ -25,12 +42,35 @@ module.exports = {
     });
   },
 
-  'setting via JSON input should allow you to access a Document instance': function (assert, done) {
+  'setting via JSON input should allow you to access a Document instance (defined with model)': function (assert, done) {
     var user = new User({
       name: 'Charlie',
       dog: {name: 'Snoopy'}
     });
-    user.dog.do( function (dog) {
+    user.dog.do( function (err, dog) {
+      assert.ok((dog instanceof Dog) === true);
+      done();
+    });
+  },
+
+     
+  'setting via JSON input should allow you to access a Document instance (defined with schema)': function (assert, done) {
+    var user = new User2({
+      name: 'Charlie',
+      dog: {name: 'Snoopy'}
+    });
+    user.dog.do( function (err, dog) {
+      assert.ok((dog instanceof Dog) === true);
+      done();
+    });
+  },
+ 
+  'setting via JSON input should allow you to access a Document instance (defined with string)': function (assert, done) {
+    var user = new User3({
+      name: 'Charlie',
+      dog: {name: 'Snoopy'}
+    });
+    user.dog.do( function (err, dog) {
       assert.ok((dog instanceof Dog) === true);
       done();
     });
@@ -41,7 +81,7 @@ module.exports = {
       name: 'Charlie',
       dog: new Dog({name: 'Snoopy'})
     });
-    user.dog.do( function (dog) {
+    user.dog.do( function (err, dog) {
       assert.ok((dog instanceof Dog) === true);
       assert.ok(dog.name === 'Snoopy');
       done();
@@ -70,8 +110,22 @@ module.exports = {
       }
     }).save( function (errors, user) {
       Dog.find({name: 'Lassie'}).first( function (err, dog) {
-        user.dog.do( function (puppy) {
+        user.dog.do( function (err, puppy) {
           assert.ok(puppy.id === dog.id);
+          done();
+        });
+      });
+    });
+  },
+
+  'a found object that has a dbref should be able to de-reference that dbref': function (assert, done) {
+    User.create({
+      name: 'Tintin',
+      dog: { name: 'Milou' }
+    }, function (err, createdUser) {
+      User.first({name: 'Tintin'}, function (err, foundUser) {
+        foundUser.dog.do( function (dog) {
+          assert.ok((dog instanceof Dog) === true);
           done();
         });
       });
@@ -85,10 +139,10 @@ module.exports = {
         name: 'Snoopy'
       }
     });
-    user.dog.do( function (dog1) {
+    user.dog.do( function (err, dog1) {
       var id1 = user._.doc.dog['$id'];
       user.dog = new Dog({name: 'Woodstock'});
-      user.dog.do( function (dog2) {
+      user.dog.do( function (err, dog2) {
         var id2 = user._.doc.dog.oid;
         assert.ok(dog1.id !== dog2.id);
         assert.ok(id1 !== id2);
@@ -126,7 +180,7 @@ module.exports = {
     }).save( function (errors, dog2) {
       user.dog.do( function (dog1) { // dog1 should be Squeak
         user._.doc.dog.oid = dog2._.doc._id;
-        user.dog.do( function (refreshedDog) {
+        user.dog.do( function (err, refreshedDog) {
           assert.ok(refreshedDog.name === dog2.name);
           done();
         });
@@ -142,7 +196,7 @@ module.exports = {
       name: 'Turner',
       dog: {name: 'Hooch'}
     }).save( function (errors, user) {
-      user.dog.do( function (dog) {
+      user.dog.do( function (err, dog) {
         dog.name = 'Hooch the 2nd';
         user.save( function (errors, user) {
           Dog.findById(dog.id, function (err, found) {
@@ -163,7 +217,7 @@ module.exports = {
     }).save( function (errors, user) {
       user.dog.remove( function () {
         assert.ok( typeof user._.doc.dog === "undefined");
-        user.dog.do( function (_dog) {
+        user.dog.do( function (err, _dog) {
           assert.ok( typeof _dog === "undefined" );
           done();
         });

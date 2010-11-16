@@ -467,7 +467,7 @@ module.exports = {
         name: 'nate',
         test: [1,2,3]
       });
-      
+
       assert.ok(af.test.length == 3);
       assert.ok(af.test.get(1) == 2);
       af.test.set(1,5);
@@ -539,8 +539,6 @@ module.exports = {
       af.email = 'valid@email.com';
       af.age = 60;
       af.save(function(err, doc){
-//        console.log(err);
-//        assert.ok(!err);
         assert.ok(!doc.errors);
         done();
       });
@@ -651,9 +649,9 @@ module.exports = {
       notes: [{note: 'hi', date: new Date()}] 
     });
   
-    assert.ok(edt.notes[0].note == 'hi');
+    assert.ok(edt.notes.at(0).note == 'hi');
     edt.notes.push({note: 'bye', date: new Date()});
-    assert.ok(edt.notes[1].note == 'bye');
+    assert.ok(edt.notes.at(1).note == 'bye');
   },
   
   'test invalid type coercion': function(assert, done){

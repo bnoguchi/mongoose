@@ -54,7 +54,7 @@ module.exports = {
       thought.save( function (errors, thought) {
         // should automatically save the parent object
         User.find({name: 'Brian'}).first( function (err, foundUser) {
-          thought.thinker.do( function (_author) {
+          thought.thinker.do( function (err, _author) {
             assert.equal(_author.name, foundUser.name);
             done();
           });
@@ -72,7 +72,7 @@ module.exports = {
         assert.equal(thought.descr, 'Thought 2');
         // should automatically save the parent object
         User.find({name: 'Nathan'}).first( function (err, foundUser) {
-          thought.thinker.do( function (_author) {
+          thought.thinker.do( function (err, _author) {
             assert.equal(_author.name, foundUser.name);
             // should automatically save the thought
             Thought.findById(thought.id, function (err, foundThought) {

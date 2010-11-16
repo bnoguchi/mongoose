@@ -207,8 +207,8 @@ module.exports = {
       assert.length(docs, 1);
       assert.isUndefined(docs[0].visits);
       assert.equal(23, docs[0].age);
-      assert.eql({}, docs[0].name);
-      assert.eql({}, docs[0].contact);
+      assert.eql(undefined, docs[0].name);
+      assert.eql(undefined, docs[0].contact);
       done();
     });
   },
@@ -220,7 +220,7 @@ module.exports = {
       assert.equal('Nathan', docs[0].name.first);
       assert.isUndefined(docs[0].name.last);
       assert.isUndefined(docs[0].age);
-      assert.eql({}, docs[0].contact);
+      assert.eql(undefined, docs[0].contact);
       done();
     });
   },
@@ -232,7 +232,7 @@ module.exports = {
       assert.equal('Nathan', docs[0].name.first);
       assert.equal('White', docs[0].name.last);
       assert.equal(33, docs[0].age);
-      assert.eql({}, docs[0].contact);
+      assert.eql(undefined, docs[0].contact);
       done();
     });
   },
@@ -256,7 +256,7 @@ module.exports = {
         assert.length(docs, 1);
         assert.equal('Nathan', docs[0].name.first);
         assert.equal(33, docs[0].age);
-        assert.eql({}, docs[0].contact);
+        assert.eql(undefined, docs[0].contact);
         done();
     });
   },
@@ -270,7 +270,7 @@ module.exports = {
         assert.length(docs, 1);
         assert.equal('Nathan', docs[0].name.first);
         assert.equal(33, docs[0].age);
-        assert.eql({}, docs[0].contact);
+        assert.eql(undefined, docs[0].contact);
         done();
     });
   },
@@ -283,7 +283,7 @@ module.exports = {
         assert.length(docs, 1);
         assert.equal('Nathan', docs[0].name.first);
         assert.equal(33, docs[0].age);
-        assert.eql({}, docs[0].contact);
+        assert.eql(undefined, docs[0].contact);
         done();
     });
   },
@@ -296,7 +296,7 @@ module.exports = {
         assert.length(docs, 1);
         assert.equal('Nathan', docs[0].name.first);
         assert.equal(33, docs[0].age);
-        assert.eql({}, docs[0].contact);
+        assert.eql(undefined, docs[0].contact);
         done();
     });
   },
@@ -307,7 +307,7 @@ module.exports = {
       assert.length(docs, 1);
       assert.equal('Nathan', docs[0].name.first);
       assert.isUndefined(docs[0].age);
-      assert.eql({}, docs[0].contact);
+      assert.eql(undefined, docs[0].contact);
       done();
     });
   },

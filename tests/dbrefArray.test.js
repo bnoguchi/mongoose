@@ -14,6 +14,18 @@ mongoose.define('Cuisine')
   .dbrefArray('restaurants', Restaurant);
 var Cuisine = mongoose.Cuisine;
 
+
+var ResturantSchema = mongoose.define('Restaurant2')
+  .oid('_id')
+  .string('name');
+var Restaurant2 = mongoose.Restaurant2;
+
+var CuisineSchema = mongoose.define('Cuisine2')
+  .oid('_id')
+  .string('name')
+  .dbrefArray('restaurants', ResturantSchema);
+var Cuisine2 = mongoose.Cuisine2;
+
 // TODO Show only send dirty members
 // TODO Test chaining
 module.exports = {
@@ -25,7 +37,7 @@ module.exports = {
     });
   },
 
-  'setting via JSON input should allow you to access an array of Document instances': function (assert, done) {
+  'setting via JSON input should allow you to access an array of Document instances (defined with model)': function (assert, done) {
     var cuisine = new Cuisine({
       name: 'Thai',
       restaurants: [
@@ -36,6 +48,21 @@ module.exports = {
     var count = 0;
     cuisine.restaurants.forEach( function (diner) {
       assert.ok(diner instanceof Restaurant);
+      if (++count === 2) done();
+    });
+  },
+  
+  'setting via JSON input should allow you to access an array of Document instances (defined with schema)': function (assert, done) {
+    var cuisine = new Cuisine2({
+      name: 'Thai',
+      restaurants: [
+        { name: 'Osha Thai' },
+        { name: 'Thai Stick' }
+      ]
+    });
+    var count = 0;
+    cuisine.restaurants.forEach( function (diner) {
+      assert.ok(diner instanceof Restaurant2);
       if (++count === 2) done();
     });
   },
