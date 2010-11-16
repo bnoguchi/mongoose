@@ -139,6 +139,28 @@ module.exports = {
       });
     });
   },
+
+  'retrieving previously saved referring members as JSON via toJSON': function (assert, done) {
+    User.create({name: 'Popeye'}, function (err, user) {
+      Thought.create({ thinker: user, descr: 'Spinach'}, function (_,_) {
+        Thought.create({ thinker: user, descr: 'Olive Oyle' }, function (_,_) {
+          User.findById(user.id, function (err, foundUser) {
+            foundUser.thoughts.toJSON().all(function (allThoughts) {
+              assert.equal(allThoughts.length, 2);
+              assert.deepEqual(allThoughts[0], {
+                descr: 'Spinach',
+                thinker: {
+                  '$ref': 'Users',
+                  '$id': user.id
+                }
+              });
+              done();
+            });
+          });
+        });
+      });
+    });
+  },
   teardown: function(){
     db.close();
   }
