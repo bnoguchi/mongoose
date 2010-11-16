@@ -142,18 +142,16 @@ module.exports = {
 
   'retrieving previously saved referring members as JSON via toJSON': function (assert, done) {
     User.create({name: 'Popeye'}, function (err, user) {
-      Thought.create({ thinker: user, descr: 'Spinach'}, function (_,_) {
-        Thought.create({ thinker: user, descr: 'Olive Oyle' }, function (_,_) {
+      Thought.create({ thinker: user, descr: 'Spinach'}, function (_, thought1) {
+        Thought.create({ thinker: user, descr: 'Olive Oyle' }, function (_, thought2) {
           User.findById(user.id, function (err, foundUser) {
             foundUser.thoughts.toJSON().all(function (allThoughts) {
               assert.equal(allThoughts.length, 2);
-              assert.deepEqual(allThoughts[0], {
-                descr: 'Spinach',
-                thinker: {
-                  '$ref': 'Users',
-                  '$id': user.id
-                }
-              });
+              assert.ok((allThoughts[0] instanceof Thought) === false);
+              assert.equal(allThoughts[0]._id, thought1.id);
+              assert.equal(allThoughts[0].descr, 'Spinach');
+              assert.equal(allThoughts[0].thinker.namespace, 'CoolUsers');
+              assert.equal(allThoughts[0].thinker.oid, user.id);
               done();
             });
           });
