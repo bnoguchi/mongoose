@@ -397,7 +397,30 @@ module.exports = {
     var ph = new PostHooks({test: 'hi'},true);
     assert.ok(ph._.doc.test == 'hi');
     process.nextTick(function(){
-      assert.ok(total == 2);
+      assert.equal(total, 2);
+    });
+  },
+
+  'testing post hooks with next': function () {
+    var document = mongoose.define;
+    var total = 0;
+    document('PostHooksWithNext')
+      .string('test')
+      .post('hydrate', function (next, done){
+        total++;
+        next();
+      })
+      .post('hydrate', function(next, done){
+        total++;
+        next();
+      });
+     
+    var PostHooksWithNext = mongoose.PostHooksWithNext;
+    
+    var ph = new PostHooksWithNext({test: 'hi'},true);
+    assert.ok(ph._.doc.test == 'hi');
+    process.nextTick(function(){
+      assert.equal(total, 2);
     });
   },
   
