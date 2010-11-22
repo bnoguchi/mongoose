@@ -361,6 +361,24 @@ module.exports = {
     assert.ok(ph._.doc.test == 'hi');
     assert.ok(total == 2);
   },
+
+  'test pre hooks without next callback should fire in parallel': function () {
+    var document = mongoose.define;
+    var total = 0;
+    document('PreHooksNoNext')
+      .string('test')
+       .pre('hydrate', function(){
+        total++;
+      })
+      .pre('hydrate', function(){
+        total++;
+      });
+     
+    var PreHooksNoNext = mongoose.PreHooksNoNext;
+    var ph = new PreHooksNoNext({test: 'hi'},true);
+    assert.ok(ph._.doc.test == 'hi');
+    assert.ok(total == 2);
+  },
   
   'test override': function(){
     var document = mongoose.define;
