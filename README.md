@@ -475,6 +475,11 @@ Nathan White &lt;nathan@learnboost.com&gt;
 
 Guillermo Rauch &lt;guillermo@learnboost.com&gt;
 
+TJ Holowaychuk ([visionmedia](http://github.com/visionmedia))
+
+Brian Noguchi ([bnoguchi](http://github.com/bnoguchi))
+
+
 ## License 
 
 (The MIT License)
