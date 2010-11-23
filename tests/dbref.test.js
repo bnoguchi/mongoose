@@ -23,8 +23,6 @@ mongoose.define('User2')
   .dbrefArray('puppies', DogSchema);
 var User2 = mongoose.User2;
 
-//console.log(DogSchema)
-
 mongoose.define('User3')
   .oid('_id')
   .string('name')
@@ -37,7 +35,11 @@ module.exports = {
   setup: function (done) {
     Dog.remove({}, function () {
       User.remove({}, function () {
-        done();
+        User2.remove({}, function () {
+          User3.remove({}, function () {
+            done();
+          });
+        });
       });
     });
   },
@@ -73,6 +75,22 @@ module.exports = {
     user.dog.do( function (err, dog) {
       assert.ok((dog instanceof Dog) === true);
       done();
+    });
+  },
+
+  'setting directly to a DBRef should allow you to access the correct de-reference object later': function (assert, done) {
+    Dog.create({name: 'Banana'}, function (err, createdDog) {
+      var dbref = new DBRef(createdDog._schema._collection, createdDog._id);
+      var user = new User({
+        name: 'Brian',
+        dog: dbref
+      });
+      user.dog.do( function (err, dereffedDog) {
+        assert.ok(dereffedDog instanceof Dog);
+        assert.equal(dereffedDog.id, createdDog.id);
+        assert.equal(dereffedDog.name, createdDog.name);
+        done();
+      });
     });
   },
 
@@ -124,7 +142,7 @@ module.exports = {
       dog: { name: 'Milou' }
     }, function (err, createdUser) {
       User.first({name: 'Tintin'}, function (err, foundUser) {
-        foundUser.dog.do( function (dog) {
+        foundUser.dog.do( function (err, dog) {
           assert.ok((dog instanceof Dog) === true);
           done();
         });
