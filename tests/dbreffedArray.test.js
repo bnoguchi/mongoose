@@ -11,8 +11,7 @@ mongoose.define('Thought')
 mongoose.define('CoolUser')
   .oid('_id')
   .string('name')
-  .dbreffedArray('thoughts', 'Thought', {as: 'thinker'})
-    .sort({rank: 1});
+  .dbreffedArray('thoughts', 'Thought', {as: 'thinker', sort: {rank: 1}});
 //    .page({limit: 10}); // TODO Add in this default pagination syntax
                           // TODO Implement the accompanying schemaType page method variation
                           // TODO ... .page(3), equiv to .page({limit: 10, skip: 20})
