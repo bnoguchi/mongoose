@@ -5,12 +5,14 @@ var assert = require('assert')
 mongoose.define('Thought')
   .oid('_id')
   .string('descr')
+  .number('rank')
   .dbref('thinker', 'CoolUser');
 
 mongoose.define('CoolUser')
   .oid('_id')
   .string('name')
-  .dbreffedArray('thoughts', 'Thought', {as: 'thinker'});
+  .dbreffedArray('thoughts', 'Thought', {as: 'thinker'})
+    .sort({rank: 1});
 //    .page({limit: 10}); // TODO Add in this default pagination syntax
                           // TODO Implement the accompanying schemaType page method variation
                           // TODO ... .page(3), equiv to .page({limit: 10, skip: 20})
@@ -159,6 +161,26 @@ module.exports = {
       });
     });
   },
+
+  'retrieving the dbreffedArray in sorted order': function (assert, done) {
+    User.create({name: 'sorter'}, function (err, user) {
+      user.thoughts.create({name: 'thought4', rank: 4}, function (err, thought4) {
+        user.thoughts.create({name: 'thought10', rank: 10}, function (err, thought10) {
+          user.thoughts.create({name: 'thought2', rank: 2}, function (err, thought2) {
+            user.thoughts.map( function (el) {
+              return el.rank;
+            }).all( function (defaultSortedRanks) {
+              // Assert default order
+              assert.deepEqual([2,4,10], defaultSortedRanks);
+              // TODO Assert over-ride order
+              done();
+            });
+          });
+        });
+      });
+    });
+  },
+
   teardown: function(){
     db.close();
   }
