@@ -77,7 +77,11 @@ module.exports = {
             // should automatically save the thought
             Thought.findById(thought.id, function (err, foundThought) {
               assert.equal(foundThought.name, thought.name);
-              done();
+              // Should not add itself more than once
+              user.thoughts.all( function (thoughts) {
+                assert.equal(1, thoughts.length);
+                done();
+              });
             });
           });
         });
