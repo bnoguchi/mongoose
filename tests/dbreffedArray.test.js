@@ -184,6 +184,27 @@ module.exports = {
     });
   },
 
+  'over-riding dbreffedArray via set should destroy pointers to it from past referers': function (assert, done) {
+    User.create({name: 'destroyer'}, function (err, user) {
+      user.thoughts.create({name: 'toUsurp1'}, function (err, t1) {
+        user.thoughts.create({name: 'toUsurp2'}, function (err, t2) {
+          user.set('thoughts', [
+            {name: 'thought101'},
+            {name: 'thought102'}
+          ]);
+          user.save( function (err, updatedUser) {
+            Thought.first({name: 'toUsurp1'}, function (err, tu1) {
+              tu1.thinker.do( function (err, found) {
+                assert.equal('undefined', typeof found);
+                done();
+              });
+            });
+          });
+        });
+      });
+    });
+  },
+
   teardown: function(){
     db.close();
   }
