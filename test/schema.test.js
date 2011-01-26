@@ -637,8 +637,8 @@ module.exports = {
   'test setting options': function () {
     var Tobi = new Schema();
 
-    Tobi.set('a', 'b');
-    Tobi.set('safe', false);
+    Tobi.option('a', 'b');
+    Tobi.option('safe', false);
 
     Tobi.options.a.should.eql('b');
     Tobi.options.safe.should.be.false;

@@ -47,6 +47,19 @@ var BlogPost = new Schema({
   , comments  : [Comments]
 });
 
+// // Uncomment this block to test Schema Builder
+//var BlogPost = Schema.build()
+//                 .string('title')
+//                 .string('slug')
+//                 .date('date')
+//                 .object('meta', Schema.build()
+//                                  .date('date')
+//                                  .number('visitors')
+//                  )
+//                 .boolean('published')
+//                 .array('owners', ObjectId)
+//                 .array('comments', Comments);
+
 BlogPost.method('cool', function(){
   return this;
 });
